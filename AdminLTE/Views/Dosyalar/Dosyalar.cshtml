@@ -1,0 +1,126 @@
+﻿@model IEnumerable<AdminLTE.Models.Dosya>
+
+@{
+    ViewBag.Title = "Dosyalar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Dosyalar</h2>
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-10">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-4">
+                <input class="form-control" type="file" id="SelectImage"  name="link" value="" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-3">
+                <input class="form-control btn-success show-alert" type="button" onclick="UploadImage()" name="Ekle" value="Ekle"  />
+            </div>
+        </div>
+    </div>
+
+<div class="container">
+    <div class="row">
+        @foreach (var dosya in Model)
+        {
+
+            <div class="col-md-3 col-sm-4 sil-dosya" text-align="center">
+                @{ 
+                    string uzanti = Path.GetExtension(dosya.link);
+                    if(uzanti == ".docx")
+                    {
+                        <img src="~/Content/images/word.png" class="x" title="@dosya.link"/>
+                    }
+                    else if(uzanti == ".xlsx")
+                    {
+                        <img src="~/Content/images/excel.png" class="x" title="@dosya.link"/>
+                    }
+                    else if(uzanti == ".pdf")
+                    {
+                        <img src="~/Content/images/pdf.png" class="x" title="@dosya.link"/>
+                    }
+                    else
+                    {
+                        <img src="@dosya.link" class="x" title="@dosya.link"/>
+                    }
+
+                }
+                
+                <br />
+                <span class="post-categories">
+                    <button class="btn btn-danger show-alert" type="button" onclick="return ResimSil(@dosya.id)">Sil</button>
+                </span>
+
+                <div>
+                    <p id="@dosya.link">@dosya.link</p>
+                    <button class="btn btn-xs btn-warning" onclick="copyToClipboard('@dosya.link')">Linki Kopyala</button>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+
+
+     @section Scripts {
+     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+    function ResimSil(id) {
+
+        bootbox.confirm("Silmek istediğinize emin misiniz?", function (result) {
+            if (result) {
+                var dataObject = {
+                    id: $("#id").val()
+                };
+                var form_data = new FormData();
+                form_data.append('id', dataObject);
+                window.location = '/Dosyalar/ResimSil/' + id;
+            }
+        });
+    }
+
+        var UploadImage = function () {
+            var file = $("#SelectImage").get(0).files;
+            var data = new FormData;
+            data.append("link", file[0]);
+            $.ajax({
+                type: "POST",
+                url: "/Dosyalar/ResimEkle",
+                data: data,
+                contentType: false,
+                processData: false,
+                success: function (sonuc) {
+                    if (sonuc) {
+                        bootbox.alert({
+                            message: "Yüklendi",
+                            callback: function () {
+                                window.location.reload(true);
+                            }
+                        })
+                    }
+                    else {
+                        bootbox.alert({
+                            message: "Hata"
+                        })
+                    }
+                }
+            })
+        }
+
+        function copyToClipboard(elementId) {
+            var aux = document.createElement("input");
+            aux.setAttribute("value", document.getElementById(elementId).innerHTML);
+            document.body.appendChild(aux);
+            aux.select();
+            document.execCommand("copy");
+            document.body.removeChild(aux);
+        }
+    </script>
+}

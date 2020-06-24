@@ -1,0 +1,130 @@
+﻿@model AdminLTE.Models.Galeriler
+
+@{
+    ViewBag.Title = "Galeriler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*<h3>@TempData["hata"]</h3>*@
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h3>Galeri Oluşturma</h3>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <h3>Ad:</h3>
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ad, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ad, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <h3>Tip:</h3>
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.tip, new SelectList(ViewBag.Liste, "ad", "ad"), "")
+                @Html.ValidationMessageFor(model => model.tip, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <h3>Genişlik:</h3>
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.genislik, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.genislik, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <h3>Yükseklik:</h3>
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.yukseklik, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.yukseklik, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <h3>Aktif:</h3>
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.CheckBoxFor(model => model.aktif)
+                @Html.ValidationMessageFor(model => model.aktif, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class=" col-md-10">
+                <input type="submit" value="Oluştur" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<table class="tablo table table-bordered ">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ad)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.tip)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.genislik)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.yukseklik)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.aktif)
+        </th>
+    </tr>
+    @foreach (var item in ViewBag.galeriListe)
+    {
+        <tr>
+            <td>
+                @item.ad
+            </td>
+            <td>
+                @item.tip
+            </td>
+            <td>
+                @item.genislik
+            </td>
+            <td>
+                @item.yukseklik
+            </td>
+            <td>
+                @item.aktif
+            </td>
+
+            <td>
+                <a href="/Galeriler/@item.id" class="btn btn-sm btn-bitbucket" rel="tag">Düzenle</a>
+                <button class="btn btn-sm btn-danger" type="button" onclick="return GaleriSil(@item.id)">Sayfayı Sil</button>
+            </td>
+
+        </tr>
+    }
+
+
+</table>
+
+
+@section Scripts {
+    <script>
+        function GaleriSil(id) {
+            bootbox.confirm("Silmek istediğinize emin misiniz?", function (result) {
+                if (result) {
+                    var dataObject = {
+                        id: $("#id").val()
+                    };
+                    var form_data = new FormData();
+                    form_data.append('id', dataObject);
+                    window.location = '/Galeriler/GaleriSil/' + id;
+                }
+            });
+        }
+    </script>
+
+        @Scripts.Render("~/bundles/jqueryval")
+    }

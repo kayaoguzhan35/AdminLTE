@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="SistemModelStoreContainer" CdmEntityContainer="SistemEntities2">
+    <EntitySetMapping Name="Menu">
+      <EntityTypeMapping TypeName="SistemModel.Menu">
+        <MappingFragment StoreEntitySet="Menu">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="ad" ColumnName="ad" />
+          <ScalarProperty Name="aktif" ColumnName="aktif" />
+          <ScalarProperty Name="ustId" ColumnName="ustId" />
+          <ScalarProperty Name="sira" ColumnName="sira" />
+          <ScalarProperty Name="icerik" ColumnName="icerik" />
+          <ScalarProperty Name="dislink" ColumnName="dislink" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

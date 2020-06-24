@@ -1,0 +1,132 @@
+﻿@model AdminLTE.Models.Urunler
+
+@{
+    ViewBag.Title = "UrunEkle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Ürün Ekle</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <hr/>
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <h3>Ad</h3>
+    <div class="form-group">
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ad, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ad, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <h3>Fiyat</h3>
+    <div class="form-group">
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.fiyat, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.fiyat, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <h3>Aktif</h3>
+    <div class="form-group">
+        <div class="col-md-10">
+                @Html.CheckBoxFor(model => model.aktif)
+                @Html.ValidationMessageFor(model => model.aktif, "", new { @class = "text-danger" }) 
+        </div>
+    </div>
+    <h3>Bilgi</h3>
+    <div class="form-group">
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.bilgi, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.bilgi, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <h3>Detaylı Bilgi</h3>
+    <div class="form-group">
+        <div class="col-md-10">
+            @Html.TextAreaFor(model => model.detaylıBilgi, new { @id = "editor1" })
+            <script type="text/javascript">
+                                var editor = CKEDITOR.instances['editor1'];
+                                if (editor) { editor.destroy(true); }
+                                CKEDITOR.replace('editor1', {
+                                    enterMode: CKEDITOR.ENTER_BR,
+                                });
+                                CKFinder.setupCKEditor(null, '@Url.Content("~/ckeditor/ckfinder/")');
+            </script>
+            @Html.ValidationMessageFor(model => model.detaylıBilgi, "", new { @class = "text-danger" })
+        </div>  
+    </div>
+
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Kaydet" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+<h2>Ürün Listesi:</h2>
+<h3 class="h3-color">@TempData["hata"]</h3>
+<table class="tablo table table-bordered ">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ad)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.fiyat)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.aktif)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.bilgi)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.detaylıBilgi)
+        </th>
+    </tr>
+    @foreach (var item in ViewBag.urunListe)
+    {
+        <tr>
+            <td>
+                @item.ad
+            </td>
+            <td>
+                @item.fiyat
+            </td>
+            <td>
+                @item.aktif
+            </td>
+            <td>
+                @item.bilgi
+            </td>
+            <td>
+                @item.detaylıBilgi
+            </td>
+            <td>
+                <a href="/Urunler/@item.id" class="btn btn-sm btn-bitbucket" rel="tag">Düzenle</a>
+                <button class="btn btn-sm btn-danger" type="button" onclick="return UrunSil(@item.id)">Sayfayı Sil</button>
+            </td>
+        </tr>
+    }
+</table>
+
+@section Scripts {
+    <script>
+        function UrunSil(Id) {
+            bootbox.confirm("Silmek istediğinize emin misiniz?", function (result) {
+                if (result) {
+                    var dataObject = {
+                        Id: $("#id").val()
+                    };
+                    var form_data = new FormData();
+                    form_data.append('id', dataObject);
+                    window.location = '/Urunler/UrunSil/' + Id;
+                }
+            });
+        }
+    </script>
+    @Scripts.Render("~/bundles/jqueryval")
+}

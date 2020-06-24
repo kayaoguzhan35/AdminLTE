@@ -1,0 +1,165 @@
+﻿@model AdminLTE.Models.Menuler
+
+@{
+    ViewBag.Title = "MenuNavbar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.id)
+        <h3>Menü Tipi</h3>
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.ad, new SelectList(ViewBag.menuTipi, "ad", "ad"), "")
+                @Html.ValidationMessageFor(model => model.ad, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <input class="jscolor {onFineChange:'update(this)'}" name="Renk" value="@Model.renk">
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Getir" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+@{
+    Html.RenderAction("Menu", "Dosyalar");
+}
+
+
+@section Scripts {
+    <script>
+
+        function update(jscolor) {
+            // 'jscolor' instance can be used as a string
+            document.getElementById('rect').style.backgroundColor = '#' + jscolor
+            document.getElementById('rect1').style.backgroundColor = '#' + jscolor
+            document.getElementById('rect2').style.backgroundColor = '#' + jscolor
+            document.getElementById('rect3').style.backgroundColor = '#' + jscolor
+            document.getElementById('rect4').style.backgroundColor = '#' + jscolor
+            document.getElementById('hex-str').innerHTML = picker.toHEXString();
+        }
+
+
+        (function ($) {
+
+            $.fn.menumaker = function (options) {
+
+                var cssmenu = $(this), settings = $.extend({
+                    title: "Menu",
+                    format: "dropdown",
+                    sticky: false
+                }, options);
+
+                return this.each(function () {
+                    cssmenu.prepend('<div id="menu-button">' + settings.title + '</div>');
+                    $(this).find("#menu-button").on('click', function () {
+                        $(this).toggleClass('menu-opened');
+                        var mainmenu = $(this).next('ul');
+                        if (mainmenu.hasClass('open')) {
+                            mainmenu.hide().removeClass('open');
+                        }
+                        else {
+                            mainmenu.show().addClass('open');
+                            if (settings.format === "dropdown") {
+                                mainmenu.find('ul').show();
+                            }
+                        }
+                    });
+
+                    cssmenu.find('li ul').parent().addClass('has-sub');
+
+                    multiTg = function () {
+                        cssmenu.find(".has-sub").prepend('<span class="submenu-button"></span>');
+                        cssmenu.find('.submenu-button').on('click', function () {
+                            $(this).toggleClass('submenu-opened');
+                            if ($(this).siblings('ul').hasClass('open')) {
+                                $(this).siblings('ul').removeClass('open').hide();
+                            }
+                            else {
+                                $(this).siblings('ul').addClass('open').show();
+                            }
+                        });
+                    };
+
+                    if (settings.format === 'multitoggle') multiTg();
+                    else cssmenu.addClass('dropdown');
+
+                    if (settings.sticky === true) cssmenu.css('position', 'fixed');
+
+                    resizeFix = function () {
+                        if ($(window).width() > 768) {
+                            cssmenu.find('ul').show();
+                        }
+
+                        if ($(window).width() <= 768) {
+                            cssmenu.find('ul').hide().removeClass('open');
+                        }
+                    };
+                    resizeFix();
+                    return $(window).on('resize', resizeFix);
+
+                });
+            };
+        })(jQuery);
+
+        (function ($) {
+            $(document).ready(function () {
+
+                $(document).ready(function () {
+                    $("#cssmenu").menumaker({
+                        title: "Menu",
+                        format: "multitoggle"
+                    });
+
+                    $("#cssmenu").prepend("<div id='menu-line'></div>");
+
+                    var foundActive = false, activeElement, linePosition = 0, menuLine = $("#cssmenu #menu-line"), lineWidth, defaultPosition, defaultWidth;
+
+                    $("#cssmenu > ul > li").each(function () {
+                        if ($(this).hasClass('active')) {
+                            activeElement = $(this);
+                            foundActive = true;
+                        }
+                    });
+
+                    if (foundActive === false) {
+                        activeElement = $("#cssmenu > ul > li").first();
+                    }
+
+                    defaultWidth = lineWidth = activeElement.width();
+
+                    defaultPosition = linePosition = activeElement.position().left;
+
+                    menuLine.css("width", lineWidth);
+                    menuLine.css("left", linePosition);
+
+                    $("#cssmenu > ul > li").hover(function () {
+                        activeElement = $(this);
+                        lineWidth = activeElement.width();
+                        linePosition = activeElement.position().left;
+                        menuLine.css("width", lineWidth);
+                        menuLine.css("left", linePosition);
+                    },
+                        function () {
+                            menuLine.css("left", defaultPosition);
+                            menuLine.css("width", defaultWidth);
+                        });
+
+                });
+
+
+            });
+        })(jQuery);
+    </script>
+    @Scripts.Render("~/bundles/jqueryval")
+}

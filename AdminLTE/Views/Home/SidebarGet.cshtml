@@ -1,0 +1,91 @@
+﻿@model IEnumerable<AdminLTE.Models.Menu>
+
+@{
+    Layout = null;
+}
+
+
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar" style="height: auto;">
+        <!-- Sidebar user panel -->
+        <div class="user-panel">
+            <div class="pull-left image">
+                <img src="~/Content/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+            </div>
+            <div class="pull-left info">
+                <p>Alexander Pierce</p>
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+        <!-- search form -->
+        <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search...">
+                <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </span>
+            </div>
+        </form>
+        <!-- /.search form -->
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+
+        <ul class="sidebar-menu tree" data-widget="tree">
+            <li>
+                @Html.ActionLink("Sayfa Ekleme Alanı", "SayfaEkle", "Sayfalar", new { area = "" }, null)
+            </li>
+
+            <li class="header">MAIN NAVIGATION</li>
+
+            @foreach (var sb in Model.ToList().Where(m => m.ustId == 0))
+            {
+                if (Model.ToList().Where(m => m.ustId == sb.id).Count() >= 1)
+                {
+                    <li class="active treeview">
+                        <a href="/Home/Index/@sb.ad">
+                            <i class="fa fa-dashboard"></i> <span>@sb.ad </span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            @foreach (var sb1 in Model.ToList().Where(m => m.ustId == sb.id))
+                            {
+                                <li class="active">@Html.ActionLink(sb1.ad, "Index", "Home", new { id = sb1.id }, null)</li>
+
+                            }
+
+                        </ul>
+
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        @Html.ActionLink(sb.ad, "Index", "Home", new { id = sb.id }, null)
+                    </li>
+
+                }
+
+            }
+            <li class="header">Modüller</li>
+            <li>
+                @Html.ActionLink("Dosyalar", "Dosyalar", "Dosyalar", new { area = "" }, null)
+            </li>
+            <li>
+                @Html.ActionLink("Galeriler", "Galeriler", "Galeriler", new { area = "" }, null)
+
+            </li>
+            <li>
+                @Html.ActionLink("Urunler", "UrunEkle", "Urunler", new { area = "" }, null)
+            </li>
+            <li>
+                @Html.ActionLink("Menü Tipi", "MenuNavbar", "Dosyalar", new { area = "" }, null)
+            </li>
+
+        </ul>          
+    </section>
+    <!-- /.sidebar -->
+</aside>

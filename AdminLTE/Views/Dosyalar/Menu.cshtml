@@ -1,0 +1,115 @@
+﻿@model IEnumerable<AdminLTE.Models.Menu>
+
+@{
+
+
+    Layout = null;
+}
+@*Menu1*@
+@if (ViewBag.menuTipii == "Menu1")
+{
+    <div id="main">
+        <div class="mcontainer">
+            <nav class="animenu" role="navigation" aria-label="Menu">
+                <button class="animenu__toggle">
+                    <span class="animenu__toggle__bar"></span>
+                    <span class="animenu__toggle__bar"></span>
+                    <span class="animenu__toggle__bar"></span>
+                </button>
+
+                <ul class="animenu__nav">
+                    @foreach (var item in Model.ToList().Where(m => m.ustId == 0))
+                    {
+                        if (Model.ToList().Where(m => m.ustId == item.id).Count() >= 1)
+                        {
+                            <li>
+                                <a href="#" class="animenu__nav__hasDropdown" aria-haspopup="true">@item.ad</a>
+                                <ul class="animenu__nav__dropdown" aria-label="submenu">
+                                    @foreach (var item2 in Model.ToList().Where(m => m.ustId == item.id))
+                                    {
+                                        <li>@Html.ActionLink(item2.ad, "Index", "Home", new { id = item2.id }, null)</li>
+                                        @*<li><a href="#" role="menuitem">@item2.Ad</a></li>*@
+                                    }
+
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li> @Html.ActionLink(item.ad, "Index", "Home", new { id = item.id }, null)</li>
+                        }
+                    }
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+}
+
+@*Menu2*@
+@if (ViewBag.menuTipii == "Menu2")
+{
+    <div id='cssmenu'>
+        <ul>
+            @foreach (var item in Model.ToList().Where(m => m.ustId == 0))
+            {
+                if (Model.ToList().Where(m => m.ustId == item.id).Count() >= 1)
+                {
+                    <li class='active has-sub'>
+                        <a href='#'>@item.ad</a>
+                        <ul>
+                            @foreach (var item2 in Model.ToList().Where(m => m.ustId == item.id))
+                            {
+                                <li>@Html.ActionLink(item2.ad, "Index", "Home", new { id = item2.id }, null) </li>
+                            }
+                        </ul>
+                    </li>
+                }
+                else
+                {
+                    <li>@Html.ActionLink(item.ad, "Index", "Home", new { id = item.id }, null)</li>
+                }
+            }
+        </ul>
+    </div>
+}
+
+@*Menu3*@
+@if (ViewBag.menuTipii == "Menu3")
+{
+
+}
+
+
+@*Menu4*@
+@if (ViewBag.menuTipii == "Menu4")
+{
+    <div class="container" id="main" role="main">
+        <ul class="menu">
+            @foreach (var item in Model.ToList().Where(m => m.ustId == 0))
+            {
+                if (Model.ToList().Where(m => m.ustId == item.id).Count() >= 1)
+                {
+                    <li>
+                        <a href="#s1">@item.ad</a>
+                        <ul class="submenu">
+                            @foreach (var item2 in Model.ToList().Where(m => m.ustId == item.id))
+                            {
+                                <li>@Html.ActionLink(item2.ad, "Index", "Home", new { id = item2.id }, null) </li>
+                            }
+                        </ul>
+                    </li>
+                }
+                else
+                {
+                    <li>@Html.ActionLink(item.ad, "Index", "Home", new { id = item.id }, null)</li>
+                }
+            }
+        </ul>
+    </div>
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,289 @@
+﻿@model AdminLTE.Models.Galeriler
+@using PagedList
+@using PagedList.Mvc
+
+@{
+
+    ViewBag.Title = "GalerileriDuzenle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>GalerileriDuzenle</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Galeriler</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.id)
+
+        <h3>Ad:</h3>
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ad, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ad, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <h3>Galeri Tipi:</h3>
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.tip, new SelectList(ViewBag.galeriListe, "ad", "ad"), "")
+                @Html.ValidationMessageFor(model => model.tip, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @if (Model.tip == "Ürün Slider")
+        {
+            <h3>Tip:</h3>
+            <div class="form-group">
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.sema, new SelectList(ViewBag.galeriListee, "ad", "ad"), "")
+                    @Html.ValidationMessageFor(model => model.sema, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+        else
+        {
+            <h3>Genişlik:</h3>
+            <div class="form-group">
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.genislik, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.genislik, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <h3>Yükseklik:</h3>
+            <div class="form-group">
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.yukseklik, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.yukseklik, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <h3>Aktif:</h3>
+            <div class="form-group">
+                <div class="col-md-10">
+                    @Html.CheckBoxFor(model => model.aktif)
+                    @Html.ValidationMessageFor(model => model.aktif, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+        }
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Kaydet" class="btn btn-default" />
+            </div>
+        </div>
+
+    </div>
+}
+
+@if (Model.tip != "Ürün Slider")
+{
+    <form class="comment-form">
+        <table>
+            <tr>
+                <td>
+                    <input type="hidden" name="galerilerId" id="galerilerId" value="@Model.id" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Ürüne resim ekle: <span class="required"></span></label><br>
+                    <input class="form-control" type="file" id="SelectImage" name="link" multiple required value="" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input class="form-control btn-success show-alert" type="button" onclick="UploadImage() " value="Ekle" />
+                </td>
+            </tr>
+        </table>
+    </form>
+}
+@if (Model.tip == "Full Page Slider")
+{
+    <div id="carousel-example-generic" style="background-color:black;" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            @{
+                var fps = 0;
+
+                for (int x = 0; x < ViewBag.sayi; x++)
+                {
+                    var itemClass = fps++ == 0 ? "active" : "";
+                    <li data-target="#carousel-example-generic" data-slide-to="@x" class="@itemClass"></li>
+                }
+            }
+        </ol>
+        <div class="carousel-inner" role="listbox">
+            @{
+                var ii = 0;
+                foreach (var item2 in ViewBag.galeriResim)
+                {
+                    var itemClass = ii++ == 0 ? "item active" : "item";
+                    <div class="@itemClass">
+                        <img class="resim-car dosya-ekle img-responsive" style="height:500px" src="@item2.link" alt="...">
+                        <div class="carousel-caption">
+                            <h3>Başlık</h3>
+                            <p>İçerik</p>
+                        </div>
+                    </div>
+                }
+            }
+            <div class="resim-carousel" style="width:100%;height:70px;">
+            </div>
+
+        </div>
+        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+}
+else if (Model.tip == "Content Slider")
+{
+    <div id="owl-demo" style="width:100%; margin:auto;background-color:white" class="owl-carousel owl-theme">
+        @foreach (var item2 in ViewBag.galeriResim)
+        {
+            <div class="item"><img src="@item2.link" class="img-rounded dosyalar-image" title="@item2.link" /></div>
+        }
+    </div>
+}
+
+else if (Model.tip == "Ürün Slider")
+{
+    if (Model.sema == null || Model.sema == "Şema 1")
+    {
+        <div class="container">
+            <div class="urunler-card  row">
+
+                @foreach (var item in ViewBag.galeriResim)
+                {
+                    <div class="col-md-4 col-sm-6 ">
+                        <div class="galeri-page thumbnail">
+                            <img class="" src="@item.kucukLink" alt="...">
+                            <div class="caption">
+                                <h3>Başlık</h3>
+                                <p>Fiyat</p>
+                                <p><a href="#" class="tus btn btn-primary" role="button">Satın Al</a> <a href="#" class="tus btn btn-default" role="button">Ürün Detayı</a></p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+else if (Model.sema == "Şema 2")
+{
+    <div class="row">
+        @foreach (var item in ViewBag.galeriResim)
+        {
+            <div class="col-lg-3 col-sm-6 sil-dosya">
+                <img src="@item.kucukLink" class="img-rounded dosyalar-image" />
+            </div>
+        }
+
+    </div>
+}
+
+else
+{
+    <div class="w3-container">
+        <div class="row">
+            <h2>Card Example</h2>
+            @foreach (var item in ViewBag.galeriResim)
+            {
+                <div class="col-lg-4 col-sm-12 w3-card  w3-light-grey">
+
+                    <div class="w3-container w3-center">
+                        <img src="@item.kucukLink" alt="Avatar" style="width:90%; padding-top:30px;">
+                        <h4>Bilgi</h4>
+                        <h5>Fiyat</h5>
+
+                        <div class="w3-section">
+                            <button class="w3-button w3-green">Satın Al</button>
+                        </div>
+                    </div>
+
+                </div>
+            }
+        </div>
+    </div>
+}
+<span class="galeri-page">
+    @Html.PagedListPager((IPagedList)ViewBag.galeriResim, Page => Url.Action("GalerileriDuzenle", "Galeriler", new { Page = Page }))
+</span>
+    }
+    else{}
+}
+
+
+
+@section Scripts {
+    <script>
+        var UploadImage = function () {
+            var file = $("#SelectImage").get(0).files;
+            var hidden = $("#galerilerId").val();
+            var data = new FormData();
+            data.append("link", file[0]);
+            data.append("galerilerId", hidden);
+            $.ajax({
+                type: "POST",
+                url: "/Galeriler/GaleriResimEkle",
+                data: data,
+                contentType: false,
+                processData: false,
+                success: function (sonuc) {
+
+                    if (sonuc) {
+                        bootbox.alert({
+                            message: "Yüklendi",
+                            callback: function () {
+                                window.location.reload(true);
+                            }
+                        })
+                        //$("#UploadedImage").append('<img src="/Modul/DisplayingImage?imgID=' + imgID + '"class= dosyalar-image "/>');
+                    } else {
+                        bootbox.alert({
+                            message: "Hata.. Lütfen gerekli uzantıya sahip bir dosya giriniz.(.jpg, .png)"
+
+                        })
+                    }
+
+                }
+            })
+        }
+        $(document).ready(function () {
+            $('.carousel').carousel({
+                interval: 60000
+            })
+            $("#owl-demo").owlCarousel({
+
+                nav: true, // Show next and prev buttons
+
+                slideSpeed: 300,
+                paginationSpeed: 400,
+                navText: ["<i class='fa fa-chevron-left'></i>", "<i class='fa fa-chevron-right'></i>"],
+
+                items: 4,
+                itemsDesktop: false,
+                itemsDesktopSmall: false,
+                itemsTablet: false,
+                itemsMobile: false
+
+            });
+
+        });
+    </script>
+    @Scripts.Render("~/bundles/jqueryval")
+}
